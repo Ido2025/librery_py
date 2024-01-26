@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Library Management System</title>
+
+    <!-- Add Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Add Toastify CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+
+    <!-- Add Toastify JS -->
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
+    <style>
+        body {
+            background-color: #f8f9fa;
+            /* Light gray background color */
+        }
+
+        #root {
+            max-width: 800px;
+            /* Set a max-width for the content container */
+            margin: auto;
+            /* Center the content horizontally */
+        }
+
+        /* Style for the modal */
+        .modal {
+            display: none;
+            /* Hide the modal by default */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            /* Semi-transparent black background */
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: #fff;
+            /* White background for the modal content */
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        #welcome-card {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background-color: #4CAF50;
+            color: #ffffff;
+            padding: 10px;
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            max-width: 200px;
+            /* Add this line for max-width */
+            margin: 5px;
+            /* Add this line for margin */
+            border: 1px solid #ccc;
+            /* Add this line for border */
+            border-radius: 5px;
+            /* Add this line for border-radius */
+        }
+
+        #logout-button {
+            cursor: pointer;
+            float: right;
+            margin-top: 10px;
+            /* Adjust this line to create space between the welcome message and the logout button */
+            margin-right: 10px;
+            background-color: #008CBA;
+            color: #ffffff;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        /* Center the buttons horizontally */
+        .centered-buttons {
+            text-align: center;
+        }
+
+        /* Display buttons inline to make them appear side by side */
+        .side-by-side-buttons button {
+            display: inline-block;
+            margin: 0 10px;
+            /* Adjust the margin as needed */
+        }
+    </style>
+</head>
+
+<body>
+    <div class="centered-buttons">
+        <!-- Add the "centered-buttons" class to center the buttons horizontally -->
+        <button class="btn btn-primary" id="addCustomersButton">Add 3 Customers</button>
+        <button class="btn btn-primary" id="addBooksButton">Add 3 Books</button>
+        <button class="btn btn-primary" id="addLoansButton">Add 3 Loans</button>
+    </div>
+
+    <!-- Welcome Card -->
+    <div id="welcome-card">
+        <p id="welcome-message"></p>
+        <button id="logout-button" onclick="logoutUser()">Logout</button>
+    </div>
+
+
+    <div id="root" class="container mt-5">
+        <h1>Keshet Library</h1>
+
+        <div class="mt-4">
+            <h2>Register</h2>
+            <div class="mb-3">
+                <label>Name:</label>
+                <input type="text" id="registerName" class="form-control" />
+            </div>
+            <div class="mb-3">
+                <label>City:</label>
+                <input type="text" id="registerCity" class="form-control" />
+            </div>
+            <div class="mb-3">
+                <label>Age:</label>
+                <input type="text" id="registerAge" class="form-control" />
+            </div>
+            <div class="mb-3">
+                <label>Password:</label>
+                <input type="password" id="registerPassword" class="form-control" />
+            </div>
+            <button class="btn btn-primary" onclick="registerUser()">Register</button>
+        </div>
+
+        <hr />
+
+        <div class="mt-4">
+            <h2>Login</h2>
+            <div class="mb-3">
+                <label>Name:</label>
+                <input type="text" id="loginName" class="form-control" />
+            </div>
+            <div class="mb-3">
+                <label>Password:</label>
+                <input type="password" id="loginPassword" class="form-control" />
+            </div>
+            <button class="btn btn-primary" onclick="loginUser()">Login</button>
+        </div>
+
+        <hr />
+
+        <div class="mt-4">
+            <h2>Add Book</h2>
+            <div class="mb-3">
+                <label>Image:</label>
+                <input type="file" id="bookImage" class="form-control" />
+            </div>
+            <div class="mb-3">
+                <label>Name:</label>
+                <input type="text" id="bookName" class="form-control" />
+            </div>
+            <div class="mb-3">
+                <label>Author:</label>
+                <input type="text" id="bookAuthor" class="form-control" />
+            </div>
+            <div class="mb-3">
+                <label>Year Published:</label>
+                <input type="text" id="bookYearPublished" class="form-control" />
+            </div>
+            <div class="mb-3">
+                <label>Book Type:</label>
+                <!-- Dropdown menu for Book Type -->
+                <select id="bookType" class="form-select">
+                    <option value="1">10 days max</option>
+                    <option value="2">5 days max</option>
+                    <option value="3">2 days max</option>
+                </select>
+            </div>
+            <button class="btn btn-primary" onclick="addBook()">Add Book</button>
+        </div>
+
+        <hr />
+
+        <div class="mt-4">
+            <h2>My Loans</h2>
+            <button class="btn btn-primary" onclick="getMyLoans()">Show My Loans</button>
+            <div id="myLoansList" class="mt-3 row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4"></div>
+        </div>
+
+        <hr />
+
+        <div class="mt-4">
+            <h2>Books</h2>
+            <button class="btn btn-primary" onclick="getAllBooks()">Show All Books</button>
+            <div id="booksList" class="mt-3 row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4"></div>
+        </div>
+
+        <hr />
+
+        <div class="mt-4">
+            <h2>Customers</h2>
+            <button class="btn btn-primary" onclick="getAllCustomers()">Show All Customers</button>
+            <div id="customersList" class="mt-3 row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4"></div>
+        </div>
+
+        <hr />
+
+        <div class="mt-4">
+            <h2>All Loans</h2>
+            <button class="btn btn-primary" onclick="getAllLoans()">Show All Loans</button>
+            <div id="loansList" class="mt-3 row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4"></div>
+        </div>
+
+        <hr />
+
+        <div class="mt-4">
+            <h2>Late Loans</h2>
+            <button class="btn btn-primary" onclick="getLateLoans()">Show Late Loans</button>
+            <div id="lateLoansList" class="mt-3 row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4"></div>
+        </div>
+
+        <hr />
+
+        <!-- Add a new section for finding a book by name -->
+        <div class="mt-4">
+            <h2>Find Book by Name</h2>
+            <div class="mb-3">
+                <label>Book Name:</label>
+                <input type="text" id="findBookName" class="form-control" />
+            </div>
+            <button class="btn btn-primary" onclick="findBook()">Find Book</button>
+            <div id="foundBook" class="mt-3"></div>
+        </div>
+
+        <!-- Add a new section for finding a customer by name -->
+        <div class="mt-4">
+            <h2>Find Customer by Name</h2>
+            <div class="mb-3">
+                <label>Customer Name:</label>
+                <input type="text" id="findCustomerName" class="form-control" />
+            </div>
+            <button class="btn btn-primary" onclick="findCustomer()">Find Customer</button>
+            <div id="foundCustomer" class="mt-3"></div>
+        </div>
+
+        <div id="updateBookModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeUpdateModal()">&times;</span>
+                <h2>Update Book</h2>
+                <div>
+                    <label for="updateBookName">Name:</label>
+                    <input type="text" id="updateBookName" class="form-control" />
+                </div>
+                <div>
+                    <label for="updateBookAuthor">Author:</label>
+                    <input type="text" id="updateBookAuthor" class="form-control" />
+                </div>
+                <div>
+                    <label for="updateBookYearPublished">Year Published:</label>
+                    <input type="text" id="updateBookYearPublished" class="form-control" />
+                </div>
+                <div>
+                    <label for="updateBookType">Book Type:</label>
+                    <input type="text" id="updateBookType" class="form-control" />
+                </div>
+                <button onclick="submitUpdateForm()">Save changes</button>
+            </div>
+        </div>
+
+
+    </div>
+
+    <!-- Add Axios link -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <!-- Add Bootstrap JS and Popper.js -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        let selectedBookId;
+        const welcomeMessage = document.getElementById('welcome-message');
+        const welcomeCard = document.getElementById('welcome-card');
+
+        function registerUser() {
+            const name = document.getElementById('registerName').value;
+            const city = document.getElementById('registerCity').value;
+            const age = document.getElementById('registerAge').value;
+            const password = document.getElementById('registerPassword').value;
+
+            axios.post('http://localhost:5000/register', { name, city, age, password })
+                .then(response => {
+
+                    Toastify({
+                        text: 'Registration successful. Please log in.',
+                        duration: 2500,
+                        gravity: 'top',
+                        style: {
+                            background: 'green',
+                            borderRadius: '10px'
+                        }
+                    }).showToast();
+                })
+                .catch(error => {
+                    Toastify({
+                        text: 'Error registering user: ' + error.response.data.error,
+                        duration: 2500,
+                        gravity: 'top',
+                        style: {
+                            background: 'red',
+                            borderRadius: '10px'
+                        }
+                    }).showToast();
+                });
+        }
+
+        function loginUser() {
+            const name = document.getElementById('loginName').value;
+            const password = document.getElementById('loginPassword').value;
+
+            axios.post('http://localhost:5000/login', { name, password })
+                .then(response => {
+                    const { access_token, welcome_message } = response.data;
+                    localStorage.setItem('access_token', access_token);
+
+                    // Display welcome message and show logout button if present
+                    if (welcome_message) {
+                        const welcomeCard = document.getElementById('welcome-card');
+                        const welcomeMessage = document.getElementById('welcome-message');
+                        const logoutButton = document.getElementById('logout-button');
+
+                        welcomeMessage.textContent = welcome_message;
+                        welcomeCard.style.display = 'block';
+
+                        // Show logout button
+                        if (welcome_message.includes(name)) {
+                            logoutButton.style.display = 'inline-block';
+                        }
+                    }
+
+                    Toastify({
+                        text: 'Login successful',
+                        duration: 2500,
+                        gravity: 'top',
+                        style: {
+                            background: 'green',
+                            borderRadius: '10px'
+                        }
+                    }).showToast();
+                })
+                .catch(error => {
+                    Toastify({
+                        text: 'Error logging in: ' + error.response.data.error,
+                        duration: 2500,
+                        gravity: 'top',
+                        style: {
+                            background: 'red',
+                            borderRadius: '10px'
+                        }
+                    }).showToast();
+                });
+        }
+
+
+        function logoutUser() {
+            // Clear the access token from localStorage
+            localStorage.removeItem('access_token');
+
+            // Hide the welcome card and logout button
+            const welcomeCard = document.getElementById('welcome-card');
+            const logoutButton = document.getElementById('logout-button');
+
+            welcomeCard.style.display = 'none';
+            logoutButton.style.display = 'none';
+
+            Toastify({
+                text: 'Logout successful hope to see you again soon',
+                duration: 2500,
+                gravity: 'top',
+                style: {
+                    background: 'blue', // Adjust background color as needed
+                    borderRadius: '10px' // Adjust border radius as needed
+                }
+            }).showToast();
+        }
+
+
+
+        function addBook() {
+            const imageInput = document.getElementById('bookImage');
+            const image = imageInput.files.length > 0 ? imageInput.files[0] : null; // Check if an image is selected
+            const name = document.getElementById('bookName').value;
+            const author = document.getElementById('bookAuthor').value;
+            const yearPublished = document.getElementById('bookYearPublished').value;
+            const bookType = document.getElementById('bookType').value;
+
+            const formData = new FormData();
+
+            // Use a default image if no image is selected
+            if (image) {
+                formData.append('file', image);
+            } else {
+                formData.append('file', 'open_book_def.jpg'); // Use the same key 'file' here
+            }
+
+            formData.append('name', name);
+            formData.append('author', author);
+            formData.append('year_published', yearPublished);
+            formData.append('book_type', bookType);
+
+            axios.post('http://localhost:5000/add_book', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    'Authorization': 'Bearer ' + localStorage.getItem('access_token')
+                },
+                withCredentials: true,
+            })
+                .then(response => {
+                    Toastify({
+                        text: `Book added successfully.`,
+                        duration: 2500,
+                        gravity: 'top',
+                        style: {
+                            background: 'green',
+                            borderRadius: '10px'
+                        }
+                    }).showToast();
+                })
+                .catch(error => {
+                    Toastify({
+                        text: 'Error adding book: ' + error.response.data.error,
+                        duration: 2500,
+                        gravity: 'top',
+                        style: {
+                            background: 'red',
+                            borderRadius: '10px'
+                        }
+                    }).showToast();
+                });
+        }
+
+
+        function getAllBooks() {
+            axios.get('http://localhost:5000/books')
+                .then(response => {
+                    const booksList = document.getElementById('booksList');
+                    booksList.innerHTML = response.data.books.map(book => {
+                        const bookTypeText = getBookTypeText(book.book_type);  // Convert numeric book type to text
+                        return `                       
+                        <div class="col mb-4">
+                            <div class="card h-100">
+                                <img src="http://localhost:5000/uploads/${book.image}" class="card-img-top" alt="Book Image" style="max-width: 100%; max-height: 200px;">
+                                <div class="card-body">
+                                    <h5 class="card-title">${book.name}</h5>
+                                    <p class="card-text">Author: ${book.author}</p>
+                                    <p class="card-text">Year Published: ${book.year_published}</p>
+                                    <p class="card-text">Book Type: ${bookTypeText}</p>
+                                    ${book.is_loaned ? '<button class="btn btn-danger" onclick="returnBook(' + book.id + ')">Return Book</button>' : '<button class="btn btn-primary" onclick="addLoan(' + book.id + ')">Loan Book</button>'}
+                                    <button class="btn btn-secondary" onclick="updateBook(${book.id})">Update</button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    }).join('');
+                })
+                .catch(error => {
+                    Toastify({
+                        text: 'Error getting books: ' + error.response.data.error,
+                        duration: 2500,
+                        gravity: 'top',
+                        style: {
+                            background: 'red',
+                            borderRadius: '10px'
+                        }
+                    }).showToast();
+                });
+        }
+
+        // Function to convert numeric book type to text
+        function getBookTypeText(bookType) {
+            switch (bookType) {
+                case 1:
+                    return '10 days max';
+                case 2:
+                    return '5 days max';
+                case 3:
+                    return '2 days max';
+                default:
+                    return 'Unknown';
+            }
+        }
+
+        function getAllCustomers() {
+            axios.get('http://localhost:5000/customers')
+                .then(response => {
+                    const customersList = document.getElementById('customersList');
+                    customersList.innerHTML = response.data.customers.map(customer => `
+                    <div class="col mb-4">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">${customer.name}</h5>
+                                <p class="card-text">City: ${customer.city}</p>
+                                <p class="card-text">Age: ${customer.age}</p>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+                })
+                .catch(error => {
+                    Toastify({
+                        text: 'Error getting customers: ' + error.response.data.error,
+                        duration: 2500,
+                        gravity: 'top',
+                        style: {
+                            background: 'red',
+                            borderRadius: '10px'
+                        }
+                    }).showToast();
+                });
+        }
+
+        function getAllLoans() {
+            axios.get('http://localhost:5000/loans')
+                .then(response => {
+                    const loansList = document.getElementById('loansList');
+                    loansList.innerHTML = response.data.loans.map(loan => `
+                <div class="col mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">Loan Details</h5>
+                            <p class="card-text">Customer Name: ${loan.customer_name}</p>
+                            <p class="card-text">Book Name: ${loan.book_name}</p>
+                            <p class="card-text">Loan Date: ${loan.loan_date}</p>
+                            <p class="card-text">Return Date: ${loan.return_date}</p>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+                })
+
+                .catch(error => {
+                    Toastify({
+                        text: 'Error getting loans: ' + error.response.data.error,
+                        duration: 2500,
+                        gravity: 'top',
+                        style: {
+                            background: 'red',
+                            borderRadius: '10px'
+                        }
+                    }).showToast();
+                });
+        }
+
+
+
+        function addLoan(bookId) {
+            axios.post('http://localhost:5000/add_loan', { bookId }, {
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem('access_token'),
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => {
+                    Toastify({
+                        text: `Book loaned successfully.`,
+                        duration: 2500,
+                        gravity: 'top',
+                        style: {
+                            background: 'green',
+                            borderRadius: '10px'
+                        }
+                    }).showToast();
+                })
+                .catch(error => {
+                    Toastify({
+                        text: 'Error loaning book: ' + error.response.data.error,
+                        duration: 2500,
+                        gravity: 'top',
+                        style: {
+                            background: 'red',
+                            borderRadius: '10px'
+                        }
+                    }).showToast();
+                });
+        }
+
+
+
+        function findBook() {
+            const bookName = document.getElementById('findBookName').value;
+
+            axios.get(`http://localhost:5000/find_book?name=${bookName}`)
+                .then(response => {
+                    const foundBook = document.getElementById('foundBook');
+                    if (response.data.error) {
+                        foundBook.innerHTML = `<p>${response.data.error}</p>`;
+                    } else {
+                        const book = response.data.book;
+                        foundBook.innerHTML = `
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">${book.name}</h5>
+                            <p class="card-text">Author: ${book.author}</p>
+                            <p class="card-text">Year Published: ${book.year_published}</p>
+                            <p class="card-text">Book Type: ${book.book_type}</p>
+                            <img src="${book.image}" class="card-img-top" alt="Book Image">
+                        </div>
+                    </div>`;
+                    }
+                })
+                .catch(error => {
+                    Toastify({
+                        text: 'Error finding book: ' + error.response.data.error,
+                        duration: 2500,
+                        gravity: 'top',
+                        style: {
+                            background: 'red',
+                            borderRadius: '10px'
+                        }
+                    }).showToast();
+                });
+        }
+
+
+        function findCustomer() {
+            const customerName = document.getElementById('findCustomerName').value;
+
+            axios.get(`http://localhost:5000/find_customer?name=${customerName}`)
+                .then(response => {
+                    const foundCustomer = document.getElementById('foundCustomer');
+                    if (response.data.error) {
+                        foundCustomer.innerHTML = `<p>${response.data.error}</p>`;
+                    } else {
+                        const customer = response.data.customer;
+                        foundCustomer.innerHTML = `
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">${customer.name}</h5>
+                            <p class="card-text">City: ${customer.city}</p>
+                            <p class="card-text">Age: ${customer.age}</p>
+                        </div>
+                    </div>`;
+                    }
+                })
+                .catch(error => {
+                    Toastify({
+                        text: 'Error finding customer: ' + error.response.data.error,
+                        duration: 2500,
+                        gravity: 'top',
+                        style: {
+                            background: 'red',
+                            borderRadius: '10px'
+                        }
+                    }).showToast();
+                });
+        }
+
+
+        function updateBook(bookId) {
+            // Set the selected book ID
+            selectedBookId = bookId;
+
+            // Fetch book details by ID
+            axios.get(`http://localhost:5000/get_book/${bookId}`, {
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem('access_token')
+                }
+            })
+                .then(response => {
+                    const bookDetails = response.data.book;
+
+                    // Populate the modal with bookDetails data
+                    document.getElementById('updateBookName').value = bookDetails.name;
+                    document.getElementById('updateBookAuthor').value = bookDetails.author;
+                    document.getElementById('updateBookYearPublished').value = bookDetails.year_published;
+                    document.getElementById('updateBookType').value = bookDetails.book_type;
+
+                    // Show the modal
+                    document.getElementById('updateBookModal').style.display = 'block';
+                })
+                .catch(error => {
+                    Toastify({
+                        text: 'Error getting book details: ' + error.response.data.error,
+                        duration: 2500,
+                        gravity: 'top',
+                        style: {
+                            background: 'red',
+                            borderRadius: '10px'
+                        }
+                    }).showToast();
+                });
+        }
+
+
+        function closeUpdateModal() {
+            // Close the modal
+            document.getElementById('updateBookModal').style.display = 'none';
+        }
+
+        function submitUpdateForm() {
+            // Get the updated values from the modal
+            const updatedName = document.getElementById('updateBookName').value;
+            const updatedAuthor = document.getElementById('updateBookAuthor').value;
+            const updatedYearPublished = document.getElementById('updateBookYearPublished').value;
+            const updatedBookType = document.getElementById('updateBookType').value;
+
+            // Make a request to update the book details
+            axios.post('http://localhost:5000/update_book', {
+                bookId: selectedBookId,
+                updatedName,
+                updatedAuthor,
+                updatedYearPublished,
+                updatedBookType
+            }, {
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem('access_token'),
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => {
+                    Toastify({
+                        text: `Book updated successfully.`,
+                        duration: 2500,
+                        gravity: 'top',
+                        style: {
+                            background: 'green',
+                            borderRadius: '10px'
+                        }
+                    }).showToast();
+                    closeUpdateModal();
+                    getAllBooks();  // Refresh the books list after updating
+                })
+                .catch(error => {
+                    Toastify({
+                        text: 'Error updating book: ' + error.response.data.error,
+                        duration: 2500,
+                        gravity: 'top',
+                        style: {
+                            background: 'red',
+                            borderRadius: '10px'
+                        }
+                    }).showToast();
+                });
+        }
+
+
+        function getAllLoans() {
+            axios.get('http://localhost:5000/loans')
+                .then(response => {
+                    const loansList = document.getElementById('loansList');
+                    loansList.innerHTML = response.data.loans.map(loan => `
+                <div class="col mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">Loan Details</h5>
+                            <p class="card-text">Customer Name: ${loan.customer_name}</p>
+                            <p class="card-text">Book Name: ${loan.book_name}</p>
+                            <p class="card-text">Loan Date: ${loan.loan_date}</p>
+                            <p class="card-text">Return Date: ${loan.return_date}</p>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+                })
+                .catch(error => {
+                    Toastify({
+                        text: 'Error getting loans: ' + error.response.data.error,
+                        duration: 2500,
+                        gravity: 'top',
+                        style: {
+                            background: 'red',
+                            borderRadius: '10px'
+                        }
+                    }).showToast();
+                });
+        }
+
+
+        function getMyLoans() {
+            axios.get('http://localhost:5000/my_loans', {
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem('access_token')
+                }
+            })
+                .then(response => {
+                    const myLoansList = document.getElementById('myLoansList');
+                    myLoansList.innerHTML = response.data.my_loans.map(loan => `
+                <div class="col mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">${loan.book_name}</h5>
+                            <p class="card-text">Loan Date: ${loan.loan_date}</p>
+                            <p class="card-text">Return Date: ${loan.return_date}</p>
+                            <button class="btn btn-danger" onclick="returnLoan('${loan.book_name}')">Return Loan</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+                })
+                .catch(error => {
+                    Toastify({
+                        text: 'Error getting my loans: ' + error.response.data.error,
+                        duration: 2500,
+                        gravity: 'top',
+                        style: {
+                            background: 'red',
+                            borderRadius: '10px'
+                        }
+                    }).showToast();
+                });
+        }
+
+        function returnLoan(bookName) {
+            const confirmReturn = confirm(`Are you sure you want to return the loan for '${bookName}'?`);
+
+            if (confirmReturn) {
+                axios.post('http://localhost:5000/return_loan', { bookName }, {
+                    headers: {
+                        'Authorization': 'Bearer ' + localStorage.getItem('access_token'),
+                        'Content-Type': 'application/json'
+                    }
+                })
+                    .then(response => {
+                        Toastify({
+                            text: 'Loan returned successfully.',
+                            duration: 2500,
+                            gravity: 'top',
+                            style: {
+                                background: 'green',
+                                borderRadius: '10px'
+                            }
+                        }).showToast();
+                        getMyLoans();
+                    })
+                    .catch(error => {
+                        Toastify({
+                            text: 'Error returning loan: ' + error.response.data.error,
+                            duration: 2500,
+                            gravity: 'top',
+                            style: {
+                                background: 'red',
+                                borderRadius: '10px'
+                            }
+                        }).showToast();
+                    });
+            }
+        }
+
+        document.getElementById('addCustomersButton').addEventListener('click', function () {
+            axios.post('http://localhost:5000/add_three_customers')
+                .then(response => {
+                    Toastify({
+                        text: response.data.message,
+                        duration: 2500,
+                        gravity: 'top',
+                        style: {
+                            background: 'green',
+                            borderRadius: '10px'
+                        }
+                    }).showToast();
+                })
+                .catch(error => {
+                    Toastify({
+                        text: 'Error adding customers: ' + error.response.data.error,
+                        duration: 2500,
+                        gravity: 'top',
+                        style: {
+                            background: 'red',
+                            borderRadius: '10px'
+                        }
+                    }).showToast();
+                });
+        });
+
+        document.getElementById('addBooksButton').addEventListener('click', function () {
+            axios.post('http://localhost:5000/add_three_books')
+                .then(response => {
+                    Toastify({
+                        text: response.data.message,
+                        duration: 2500,
+                        gravity: 'top',
+                        style: {
+                            background: 'green',
+                            borderRadius: '10px'
+                        }
+                    }).showToast();
+                })
+                .catch(error => {
+                    Toastify({
+                        text: 'Error adding books: ' + error.response.data.error,
+                        duration: 2500,
+                        gravity: 'top',
+                        style: {
+                            background: 'red',
+                            borderRadius: '10px'
+                        }
+                    }).showToast();
+                });
+        });
+
+        document.getElementById('addLoansButton').addEventListener('click', function () {
+            axios.post('http://localhost:5000/add_three_loans')
+                .then(response => {
+                    Toastify({
+                        text: response.data.message,
+                        duration: 2500,
+                        gravity: 'top',
+                        style: {
+                            background: 'green',
+                            borderRadius: '10px'
+                        }
+                    }).showToast();
+                })
+                .catch(error => {
+                    Toastify({
+                        text: 'Error adding loans: ' + error.response.data.error,
+                        duration: 2500,
+                        gravity: 'top',
+                        style: {
+                            background: 'red',
+                            borderRadius: '10px'
+                        }
+                    }).showToast();
+                });
+        });
+
+        function getLateLoans() {
+            axios.get('http://localhost:5000/late_loans')
+                .then(response => {
+                    const lateLoansList = document.getElementById('lateLoansList');
+                    lateLoansList.innerHTML = response.data.late_loans.map(loan => `
+                    <div class="col mb-4">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">Late Loan Details</h5>
+                                <p class="card-text">Customer Name: ${loan.customer_name}</p>
+                                <p class="card-text">Book Name: ${loan.book_name}</p>
+                                <p class="card-text">Days Late: ${loan.days_late}</p>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+                })
+                .catch(error => {
+                    Toastify({
+                        text: 'Error getting late loans: ' + error.response.data.error,
+                        duration: 2500,
+                        gravity: 'top',
+                        style: {
+                            background: 'red',
+                            borderRadius: '10px'
+                        }
+                    }).showToast();
+                });
+        }
+
+        fetch('/')
+            .then(response => response.json())
+            .then(data => {
+                if (data.message) {
+                    welcomeMessage.textContent = data.message;
+                    welcomeCard.style.display = 'block';
+                }
+            })
+            .catch(error => console.error('Error fetching welcome message:', error));
+    </script>
+
+</body>
+
+</html>
